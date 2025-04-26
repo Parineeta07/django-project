@@ -1,0 +1,592 @@
+<!-- light theme whole code in case of danger!! -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Task Management Vibes</title>
+  <!-- Add Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Add Bootstrap JavaScript (Bootstrap's carousel requires these) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- <link rel="stylesheet" href="styles.css" /> -->
+<style>
+  :root {
+    --pastel-green: #cdeac0;
+    --pastel-pink: #fcd5ce;
+    --pastel-yellow: #fff5ba;
+    --pastel-blue: #c3ddfd;
+    --text-primary: #4a4a4a;
+    --accent-purple: #d6bbf9;
+  }
+  
+  /* Body + Layout */
+  body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(-45deg, 
+    #fcd5ce,  /* peachy pink */
+    #fff5ba,  /* butter yellow */
+    #cdeac0,  /* matcha mint */
+    #c3ddfd,  /* sky pastel blue */
+    #e4c1f9,  /* soft lavender */
+    #ffd6e0,  /* baby pink */
+    #d0f4de,  /* minty fresh */
+    #fde2e4   /* rose milk */
+  );
+  background-size: 400% 400%;
+  animation: pastelGlow 20s ease-in-out infinite;
+  color: #333;
+}
+
+
+  
+  .main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    /* background: #ffffff; */
+    border-radius: 30px;
+    /* box-shadow: 0 8px 25px rgba(0,0,0,0.05); */
+  }
+  
+  /* Section Headers */
+  section h2 {
+    font-size: 2rem;
+    text-align: center;
+    color: #5a3f5c;
+    margin-bottom: 25px;
+  }
+  
+  /* Quotes Section */
+  .inspo-wall {
+    background: linear-gradient(145deg, var(--pastel-pink), var(--pastel-blue));
+    padding: 50px 30px;
+    border-radius: 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  }
+  
+  .quote-card {
+    background-color: #fff;
+    border: 2px dashed var(--pastel-green);
+    border-radius: 20px;
+    padding: 25px;
+    transition: all 0.3s ease;
+  }
+  
+  .quote-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  
+  /* Video Scroll */
+  .video-scroll {
+    background: var(--pastel-blue);
+    padding: 40px 30px;
+    border-radius: 25px;
+    overflow-x: auto;
+  }
+  
+  .video-row {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .video-card {
+    flex: 0 0 300px;
+    background-color: #ffffff;
+    border: 1px solid var(--pastel-green);
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+    padding: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+  }
+  
+  .video-card iframe {
+    width: 100%;
+    height: 180px;
+    border: none;
+    border-radius: 12px;
+  }
+  
+  /* Music Section */
+  .music-section {
+    background: var(--pastel-pink);
+    padding: 50px 30px;
+    border-radius: 25px;
+  }
+  
+  .playlist-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .playlist {
+    width: 300px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+  }
+  
+  .playlist:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .playlist iframe {
+    width: 100%;
+    height: 80px;
+    border-radius: 10px;
+  }
+  
+  .playlist a {
+    display: block;
+    margin-top: 10px;
+    color: #4a4a4a;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  /* Footer */
+  .site-footer {
+    background: var(--pastel-green);
+    text-align: center;
+    padding: 20px;
+    font-size: 0.95rem;
+    color: #3f3f3f;
+    border-top: 2px solid #ddd;
+    border-radius: 20px 20px 0 0;
+    margin-top: 50px;
+  }
+  /* Section wrapper */
+.reminders {
+  background: #fffafc;
+  padding: 50px 30px;
+  border-radius: 25px;
+  margin-bottom: 60px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+.reminders h2 {
+  font-size: 2rem;
+  text-align: center;
+  color: #5c4a72;
+  margin-bottom: 30px;
+}
+
+/* Grid layout */
+.reminder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+/* Card style */
+.reminder-card {
+  background: linear-gradient(135deg, #ffe0ec, #fff9c4, #ccf5d3, #d6e6ff);
+  background-size: 300% 300%;
+  animation: pastelFlow 20s ease infinite;
+  color: #333;
+  font-size: 1.05rem;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: transform 0.3s ease;
+  cursor: default;
+  
+}
+
+.reminder-card:hover {
+  transform: rotate(-1deg) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ffffff;
+  color: #333333;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* Neon Dark Mode */
+body.dark-mode {
+  background: #000;
+  color: #0ff;
+}
+
+/* Apply neon styling to all card containers */
+body.dark-mode .quote-card,
+body.dark-mode .video-card,
+body.dark-mode .reminder-card {
+  background-color: #000;
+  /* color: rgb(40, 2, 2); */
+  color: #0ff;
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
+  transition: box-shadow 0.3s ease;
+  animation: neonPulseSubtle 10s infinite;
+  box-shadow: 0 0 10px #0ff;
+}
+
+/* Card hover effect */
+body.dark-mode .quote-card:hover,
+body.dark-mode .video-card:hover,
+body.dark-mode .reminder-card:hover {
+  box-shadow: 0 0 20px #00ffcc, 0 0 40px #00ffcc;
+}
+
+/* Neon text elements */
+body.dark-mode .quote-card span,
+body.dark-mode section h2,
+body.dark-mode .site-footer,
+body.dark-mode .playlist a {
+  color: #00ffff;
+}
+
+/* Make link text glow */
+body.dark-mode .playlist a:hover {
+  color: rgb(242, 22, 125);
+  text-shadow: 0 0 5px #0f0;
+}
+
+/* Section containers in dark mode */
+body.dark-mode .inspo-wall,
+body.dark-mode .music-section,
+body.dark-mode .video-scroll,
+body.dark-mode .reminders,
+body.dark-mode .site-footer {
+  background: #000;
+}
+
+/* Pulse glow animation for reminders */
+body.dark-mode .reminder-card {
+  /* animation: neonPulse 6s infinite alternate; */
+  animation: neonPulse 10s infinite;
+  box-shadow: 0 0 10px #0ff;
+}
+
+/* Toggle button styling */
+body.dark-mode .theme-toggle {
+  background: #0ff;
+  color: #0ff;
+  box-shadow: 0 0 20px #0ff;
+}
+
+/* Dark mode playlist styling */
+body.dark-mode .playlist a {
+  color: rgb(35, 1, 9);
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .playlist a:hover {
+  transform: scale(1.1);
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+}
+
+
+/* Animated neon pulse */
+@keyframes neonPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+  }
+  50% {
+    /* box-shadow: 0 0 25px #00ffcc, 0 0 45px #00ffcc; */
+    box-shadow: 0 0 10px #00ffcc;
+  }
+}
+
+
+
+
+  @keyframes pastelGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  33% {
+    background-position: 50% 100%;
+  }
+  66% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes darkGradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+
+
+body.dark-mode {
+  background: linear-gradient(270deg,
+    #000000,
+    #003333,
+    #00cc99,
+    #00ffff,
+    #001111,
+    #004d4d,
+    #000000);
+  background-size: 1400% 1400%;
+  animation: darkGradientBG 60s ease infinite;
+  color: #0ff;
+}
+
+
+
+
+</style>  
+</head>
+<body>
+    <div class="main-container">
+        <!-- your header, quote section, video section, music section, etc. go here -->
+    
+      
+  <div class="container">
+    <h1 class="page-title">📋 Task Management Vibes</h1>
+    <p class="subtitle">Fuel your focus, fight procrastination, and vibe with the right tunes 🎧</p>
+    <br>
+    <br>
+
+    <button id="themeToggle" class="theme-toggle">
+        🌙
+      </button>
+      
+
+
+    <!-- 🌟 Quote Wall of Great Minds -->
+<section  class="inspo-wall" style="margin: 30px;">
+    <h2>💡 Wisdom from the Greats</h2>
+    <div class="quote-grid">
+      <div class="quote-card">
+        <p>“The only way to do great work is to love what you do.”</p>
+        <span>– Steve Jobs</span>
+      </div>
+      <div class="quote-card">
+        <p>“Try not to become a man of success, but rather try to become a man of value.”</p>
+        <span>– Albert Einstein</span>
+      </div>
+      <div class="quote-card">
+        <p>“You may not control all the events that happen to you, but you can decide not to be reduced by them.”</p>
+        <span>– Maya Angelou</span>
+      </div>
+      <div class="quote-card">
+        <p>“It always seems impossible until it's done.”</p>
+        <span>– Nelson Mandela</span>
+      </div>
+      <div class="quote-card">
+        <p>“Success is not final, failure is not fatal: It is the courage to continue that counts.”</p>
+        <span>– Winston Churchill</span>
+      </div>
+      <div class="quote-card">
+        <p>“Faith is taking the first step even when you don’t see the whole staircase.”</p>
+        <span>– Martin Luther King Jr.</span>
+      </div>
+    </div>
+  </section>
+  <br>
+  <br>
+  
+  
+  <!-- Mindset Boost Section -->
+  <!-- <section class="mindset-boost">
+    <h2>🌿 Mindset Boost</h2>
+    <ul>
+      <li>🌞 You’re doing better than you think.</li>
+      <li>💡 Rest is part of productivity, not the enemy of it.</li>
+      <li>📆 You can restart your day at any time.</li>
+      <li>🌻 Your pace is valid. Your progress is real.</li>
+    </ul>
+  </section> -->
+  
+
+    <!-- QUOTES Section -->
+    <section class="reminders">
+        <h2>🌟 Little Reminders</h2>
+        <div class="reminder-grid">
+          <div class="reminder-card" style="color: rgb(50, 2, 2);">You’re doing better than you think 💛</div>
+          <div class="reminder-card" style="color: rgb(50, 2, 2);">You can restart your day at any time ⏳</div>
+          <div class="reminder-card" style="color: rgb(50, 2, 2);">Small progress is still progress 🐢</div>
+          <div class="reminder-card" style="color: rgb(50, 2, 2);">Rest is productive too 🌿</div>
+          <div class="reminder-card" style="color: rgb(50, 2, 2);">Your pace is valid, your progress is real 🌈</div>
+          <div class="reminder-card" style="color: rgb(50, 2, 2);">You’ve got this, Cupcake! 🍰</div>
+        </div>
+      </section>
+      
+
+
+    <!-- ✨ VIDEOS Section -->
+    <section class="video-scroll" style="margin: 30px;padding: 20px;">
+      <h2>📺 Productivity & Task Management Vibes</h2>
+      <div id="videoCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <!-- First Row of Videos -->
+          <div class="carousel-item active">
+            <div class="video-row">
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/oTugjssqOT0" allowfullscreen></iframe>
+                <p>Getting Things Done</p>
+              </div>
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/p60rN9JEapg" allowfullscreen></iframe>
+                <p>Why You Don’t Finish Things</p>
+              </div>
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/7jexR_hd6L8?si=py75GWs9qoF6Q_RJ" allowfullscreen></iframe>
+                <p>Stick to a Task List</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Second Row of Videos -->
+          <div class="carousel-item">
+            <div class="video-row">
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/FWTNMzK9vG4?si=lXBc6UwOP7XkbSmS" allowfullscreen></iframe>
+                <p>Procrastination Struggles</p>
+              </div>
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/LgB0PFAbMPk?si=oDOOFUVAdzQqe2En" allowfullscreen></iframe>
+                <p>Plan Your Week with Me</p>
+              </div>
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/B1BwqZBy4Zs?si=dytOagp5mMTe8DAy" allowfullscreen></iframe>
+                <p>Focus Like a Monk</p>
+              </div>
+            </div>
+          </div>
+    
+          <!-- Additional Rows if necessary -->
+          <div class="carousel-item">
+            <div class="video-row">
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/w_vm5Fd50Nk?si=RFKWFisE9OnkH6vs" allowfullscreen></iframe>
+                <p>Atomic Habits in Real Life</p>
+              </div>
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/iDbdXTMnOmE" allowfullscreen></iframe>
+                <p>The Psychology of Procrastination</p>
+              </div>
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/H14bBuluwB8" allowfullscreen></iframe>
+                <p>Drive & Motivation by Pink</p>
+              </div>
+            </div>
+          </div>
+    
+          <!-- <div class="carousel-item">
+            <div class="video-row">
+              <div class="video-card">
+                <iframe src="https://www.youtube.com/embed/EWbHWMiH-Qg?si=Nmr498anaPEzKJYs" allowfullscreen></iframe>
+                <p>5hr Study with Me</p>
+              </div>
+              Add more videos if needed
+            </div>
+          </div>
+        </div> -->
+    
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#videoCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#videoCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </section>
+    
+    
+  <br>
+  <br>
+  <!-- 🎵 MUSIC Section -->
+  <section class="music-section">
+    <h2>🎶 Productivity Playlists</h2>
+    <div class="playlist-cards">
+      <!-- Original 3 -->
+      <div class="playlist">
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX3PFzdbtx1Us" allow="encrypted-media"></iframe>
+        <a href="https://open.spotify.com/playlist/37i9dQZF1DX3PFzdbtx1Us" target="_blank">Lo-Fi Beats</a>
+      </div>
+      <div class="playlist">
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWZeKCadgRdKQ" allow="encrypted-media"></iframe>
+        <a href="https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ" target="_blank">Deep Focus</a>
+      </div>
+      <div class="playlist">
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS" allow="encrypted-media"></iframe>
+        <a href="https://open.spotify.com/playlist/37i9dQZF1DX8Uebhn9wzrS" target="_blank">Beats to Think To</a>
+      </div>
+  
+      <!-- NEW 3 -->
+      <div class="playlist">
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWXLeA8Omikj7" allow="encrypted-media"></iframe>
+        <a href="https://open.spotify.com/playlist/37i9dQZF1DWXLeA8Omikj7" target="_blank">Brain Food</a>
+      </div>
+      <div class="playlist">
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWSluGMsH1R9r" allow="encrypted-media"></iframe>
+        <a href="https://open.spotify.com/playlist/37i9dQZF1DWSluGMsH1R9r" target="_blank">Instrumental Study</a>
+      </div>
+      <div class="playlist">
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWSf2RDTDayIx" allow="encrypted-media"></iframe>
+        <a href="https://open.spotify.com/playlist/37i9dQZF1DWSf2RDTDayIx" target="_blank">Jazz Vibes for Focus</a>
+      </div>
+    </div>
+  </section>
+  
+    
+  </div>
+</div>
+<footer class="site-footer">
+    <p>💻 Built with love, music, and productivity by Cupcake 💜</p>
+  </footer>
+  
+  <script>
+    const toggleButton = document.getElementById("themeToggle");
+    toggleButton.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      toggleButton.textContent = document.body.classList.contains("dark-mode") ? '☀️' : '🌙';
+    });
+  </script>
+  
+
+
+</body>
+</html>

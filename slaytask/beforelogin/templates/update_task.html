@@ -1,0 +1,141 @@
+{% extends 'home.html' %}
+
+{% block title_block %}Update Task{% endblock %}
+
+{% block main_block %}
+<style>
+  body {
+    background-color: #0d0d0d;
+  }
+
+  .update-task-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 80px;
+    min-height: 100vh;
+    background: linear-gradient(to right, #0f0f0f, #1c1c1c);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    color: white;
+    animation: slideIn 0.6s ease-in-out;
+  }
+
+  .glass-card h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: #fff;
+    font-size: 28px;
+  }
+
+  .glass-card label {
+    color: #c7c7c7;
+    font-weight: 500;
+    margin-top: 15px;
+  }
+
+  .glass-card input[type="text"],
+  .glass-card textarea,
+  .glass-card select {
+    background-color: rgba(255, 255, 255, 0.07);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+
+  .glass-card input:focus,
+  .glass-card textarea:focus,
+  .glass-card select:focus {
+    outline: none;
+    border: 1px solid #00ffe7;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+  }
+
+  .action-buttons .btn {
+    width: 48%;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .btn-success {
+    background-color: #00ffa2;
+    border: none;
+    color: #000;
+  }
+
+  .btn-secondary {
+    background-color: #555;
+    border: none;
+  }
+
+  .btn-success:hover {
+    background-color: #00e39c;
+  }
+
+  .btn-secondary:hover {
+    background-color: #444;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .glass-card {
+      padding: 30px 20px;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .action-buttons .btn {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+</style>
+
+<div class="update-task-wrapper">
+  <div class="glass-card">
+    <h2>Update Your Task</h2>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="action-buttons">
+        <button type="submit" class="btn btn-success">Update</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

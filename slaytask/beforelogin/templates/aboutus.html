@@ -1,0 +1,281 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block main_block %}
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        transition: background-color 0.4s, color 0.4s;
+    }
+
+    body.dark-mode {
+        background-color: #1c1b23;
+        color: #f0f0f0;
+    }
+
+    body.light-mode {
+        background-color: #fdfafa;
+        color: #333;
+    }
+
+    .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 999;
+        background: #9f7aea;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 0 10px #9f7aea;
+        transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+        background: #7a63d0;
+    }
+
+    .hero {
+        background: linear-gradient(to right, #2d2a37, #1c1b23);
+        padding: 100px 20px;
+        width: 100%;
+        text-align: center;
+        transition: background 0.5s;
+    }
+
+    body.light-mode .hero {
+        background: linear-gradient(to right, #e9f5ec, #ffe6ec);
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        margin: 0;
+        color: #9f7aea;
+    }
+
+    .hero p {
+        font-size: 1.3rem;
+        margin-top: 10px;
+        color: #b2f5ea;
+    }
+
+    .mission {
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .mission h2 {
+        font-size: 2.5rem;
+        color: #38b2ac;
+    }
+
+    body.light-mode .mission h2 {
+        color: #7a9e7e;
+    }
+
+    .mission p {
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: auto;
+    }
+
+    .team {
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .team h2 {
+        font-size: 2.5rem;
+        color: #f687b3;
+    }
+
+    .team-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    .team-member {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        width: 230px;
+        transition: transform 0.3s ease, background 0.4s;
+        box-shadow: 0 0 10px rgba(159, 122, 234, 0.3);
+    }
+
+    body.light-mode .team-member {
+        background: rgba(255, 255, 255, 0.8);
+        color: #222;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-member img {
+        width: 90px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 10px;
+    }
+
+    .team-member h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #ffffff;
+    }
+
+    body.light-mode .team-member h3 {
+        color: #222;
+    }
+
+    footer {
+        background-color: #2e2c38;
+        color: white;
+        text-align: center;
+        padding: 20px;
+    }
+
+    body.light-mode footer {
+        background-color: #e2f4ed;
+        color: #5f5f5f;
+    }
+    .team-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.team-member {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 320px; /* Increased width */
+    height: 420px; /* Increased height */
+    transition: transform 0.3s ease, background 0.4s;
+    box-shadow: 0 0 12px rgba(159, 122, 234, 0.3);
+}
+
+.team-member img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 3px solid #9f7aea;
+    transition: transform 0.3s ease-in-out;
+}
+
+.team-member h3 {
+    margin-top: 15px;
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+.team-member:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 0 20px rgba(159, 122, 234, 0.5);
+}
+.team-member img {
+    width: 220px;
+    height: auto;
+    max-height: 220px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 4px solid #9f7aea;
+    box-shadow: 0 0 15px rgba(159, 122, 234, 0.4);
+    transition: transform 0.3s ease-in-out;
+    object-fit: contain;
+    background-color: #fff; /* in case image has transparent bg */
+    padding: 10px;
+}
+
+.team-member h3 {
+    margin-top: 20px;
+    font-size: 1.8rem;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+</style>
+
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>About Us</h1>
+        <p>We help teams stay productive with seamless task management.</p>
+    </div>
+</section>
+
+<!-- Our Mission -->
+<section class="mission">
+    <h2>Our Mission</h2>
+    <p>Our goal is to make task management effortless and efficient with real-time collaboration.</p>
+</section>
+
+<!-- Team Section -->
+<section class="team">
+    <h2>Meet Our Team</h2>
+    <div class="team-container">
+        <div class="team-member">
+            <img src="{% static 'images/parineeta.jpg' %}" alt="Parineeta">
+            <h3>Parineeta</h3>
+        </div>
+        <div class="team-member">
+            <img src="{% static 'images/kumud.jpg' %}" alt="Kumud">
+            <h3>Kumud</h3>
+        </div>
+        <div class="team-member">
+            <img src="{% static 'images/kamaksha.jpg' %}" alt="Kamaksha">
+            <h3>Kamaksha</h3>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    Made with 💜 by Team Slay Task
+</footer>
+
+<!-- ScrollReveal + Theme Logic -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/scrollreveal/4.0.9/scrollreveal.min.js"></script>
+<script>
+    ScrollReveal().reveal('.hero-content', { duration: 1000, origin: 'bottom', distance: '50px' });
+    ScrollReveal().reveal('.mission', { duration: 1200, origin: 'left', distance: '50px' });
+    ScrollReveal().reveal('.team-member', { duration: 1500, interval: 200, origin: 'bottom', distance: '50px' });
+
+    const body = document.body;
+
+    function setTheme(theme) {
+        body.classList.remove("dark-mode", "light-mode");
+        body.classList.add(theme);
+        localStorage.setItem("theme", theme);
+    }
+
+    function toggleTheme() {
+        if (body.classList.contains("dark-mode")) {
+            setTheme("light-mode");
+        } else {
+            setTheme("dark-mode");
+        }
+    }
+
+    // Load theme on startup
+    const savedTheme = localStorage.getItem("theme") || "dark-mode";
+    setTheme(savedTheme);
+</script>
+{% endblock %}

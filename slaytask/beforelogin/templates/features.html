@@ -1,0 +1,183 @@
+{% extends 'home.html' %}
+
+{% block main_block %}
+<!-- Font Awesome CDN for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-xT5e8xSbkYjcE+wAvZn0lYekGRFqLhFq9lAkASe0TllV4b+K4Np6N9+scY2HV0Y3YoOfZPVuvWQvDo3g2Tx6Nw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --bg-color: #ffffff;
+        --text-color: #111111;
+        --card-bg: rgba(0, 0, 0, 0.03);
+        --card-hover: rgba(0, 255, 200, 0.1);
+        --card-text: #333;
+        --card-heading: #007bff;
+    }
+
+    body.dark-mode {
+        --bg-color: #0c0f1a;
+        --text-color: #ffffff;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-hover: rgba(0, 255, 200, 0.3);
+        --card-text: #ccc;
+        --card-heading: #00ffc8;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .features-page {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        padding: 100px 20px 60px;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 40px;
+        background: linear-gradient(45deg, #00ffc8, #5f5fff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInUp 1s ease forwards;
+        opacity: 0;
+    }
+
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: var(--card-heading);
+    }
+
+    .subheading {
+        font-size: 1.1rem;
+        color: var(--card-text);
+        margin-bottom: 30px;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+    }
+
+    .feature-item {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+        opacity: 0;
+        animation: fadeInUp 1s ease forwards;
+    }
+
+    .feature-item:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 16px 35px var(--card-hover);
+    }
+
+    .feature-icon {
+        font-size: 2rem;
+        color: var(--card-heading);
+        margin-bottom: 18px;
+    }
+
+    .feature-item h3 {
+        font-size: 1.4rem;
+        color: var(--card-heading);
+        margin-bottom: 10px;
+    }
+
+    .feature-item p {
+        font-size: 1rem;
+        color: var(--card-text);
+        line-height: 1.5;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        .feature-item h3 {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+<div class="features-page">
+    <div class="container">
+        <h1>🚀 Features</h1>
+        <section id="features" class="features-container">
+            <h2>Everything You Need to Stay Organized</h2>
+            <p class="subheading">
+                Supercharge your productivity with powerful features designed for seamless task management.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h3>Task Scheduling</h3>
+                    <p>Effortlessly plan, prioritize, and automate your tasks with recurring options.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                    <h3>Smart Reminders</h3>
+                    <p>Stay on top of deadlines with AI-powered reminders tailored to your workflow.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
+                    <h3>Team Collaboration</h3>
+                    <p>Share tasks, assign roles, and collaborate in real time with your team.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <h3>Cloud Sync</h3>
+                    <p>Access your tasks anytime, anywhere with seamless cloud synchronization.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Progress Tracking</h3>
+                    <p>Visualize your achievements with interactive charts and performance reports.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-cogs"></i></div>
+                    <h3>Custom Alerts</h3>
+                    <p>Set up personalized notifications to keep your workflow smooth and efficient.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

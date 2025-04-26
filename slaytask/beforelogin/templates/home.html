@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slay Task - Home</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 0.4s ease, color 0.4s ease;
+      overflow-x: hidden;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 80px;
+      /* background: linear-gradient(45deg, #8181e7, #3b3b73); */
+      background-color: black;
+      color: white;
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header img {
+      height: 50px;
+      width: 50px;
+      border-radius: 10px;
+    }
+
+    .header nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .header nav a {
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
+      transition: color 0.3s;
+    }
+
+    .signup-button {
+      background: #fff;
+      color: #4A4AFF;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .signup-button:hover {
+      background: #ddd;
+    }
+
+    .hero, .features, .testimonials, .faq, .contact, .cta, .footer {
+      padding: 100px 20px 60px;
+      text-align: center;
+      animation: fadeIn 1.2s ease;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(45deg, #8181e7, #3b3b73);
+      color: white;
+      text-align: center;
+      padding: 0 30px;
+      position: relative;
+      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.6);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      animation: fadeIn 2s ease;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin: 20px 0;
+      animation: fadeIn 2s ease;
+    }
+
+    .hero img {
+      animation: float 3s infinite alternate ease-in-out;
+      max-width: 300px;
+      margin-top: 30px;
+    }
+
+    .hero .cta-btn {
+      background-color: #ffb93d;
+      color: #222;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      margin-top: 30px;
+      transition: background-color 0.3s ease;
+    }
+
+    .hero .cta-btn:hover {
+      background-color: #e89b29;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-10px);
+      }
+    }
+    .btn-light {
+      background-color: #7d7de2;
+      color: white;
+      border-radius: 6px;
+    }
+
+    .btn-light:hover {
+      background-color: #1E1E60;
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #fff;
+    }
+
+    .dark-mode .header {
+      background: linear-gradient(45deg, #000000, #23253a);
+    }
+
+    .dark-mode .footer {
+      background-color: #000000;
+    }
+
+    .messages {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      z-index: 2000;
+      list-style: none;
+      padding: 0;
+    }
+
+    .messages li {
+      background-color: #ffc107;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes bounce {
+      0%, 100% {transform: translateY(0);}
+      50% {transform: translateY(-10px);}
+    }
+
+    @keyframes float {
+      from {transform: translateY(0);}
+      to {transform: translateY(-10px);}
+    }
+
+    /* Venom outro */
+    .venom-outro{
+      background: #000;
+      color: #0ff;
+      padding: 60px 20px;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      letter-spacing: 2px;
+      animation: venomGlitch 3s infinite alternate;
+    }
+
+    @keyframes venomGlitch {
+      0% {text-shadow: 2px 2px #f0f, -2px -2px #0ff;}
+      100% {text-shadow: -2px -2px #f0f, 2px 2px #0ff;}
+    }
+    .venom-outro {
+  padding: 60px 20px;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  animation: venomGlitch 3s infinite alternate;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+.dark-mode .venom-outro {
+  background: #000;
+  color: #0ff;
+}
+
+.light-mode .venom-outro {
+  background: #f1f1f1;
+  color: #222;
+}
+.dark-mode .venom-outro {
+  background: #000;
+  color: #0ff;
+}
+
+.dark-mode .venom-outro span {
+  color: #fff; /* White text in dark mode */
+}
+
+.light-mode .venom-outro {
+  background: #f1f1f1;
+  color: #222;
+}
+
+.light-mode .venom-outro span {
+  color: #0077cc; /* A readable blue or any bold color in light mode */
+}
+.dark-mode .venom-outro {
+  background: #000;
+  color: #0ff;
+}
+
+.dark-mode .venom-outro .task-text {
+  color: #fff;
+}
+
+.light-mode .venom-outro {
+  background: #f1f1f1;
+  color: #222;
+}
+
+.light-mode .venom-outro .task-text {
+  color: #1e1e60; /* Or any visible bold color in light mode */
+}
+.venom-outro .task-text {
+  transition: color 0.3s ease;
+}
+.venom-outro {
+  padding: 60px 20px;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  animation: venomGlitch 3s infinite alternate;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+.dark-mode .venom-outro {
+  background: #000;
+  color: #0ff;
+}
+
+.dark-mode .venom-outro .task-text {
+  color: #fff;
+}
+
+.light-mode .venom-outro {
+  background: #f1f1f1;
+  color: #222;
+}
+
+.light-mode .venom-outro .task-text {
+  color: #1e1e60;
+}
+
+:root {
+    --theme-color: #0077cc;
+}
+
+.faq {
+    padding: 60px 20px;
+    background-color: #121212;
+    color: white;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+    margin: 60px;
+    padding: 40px;
+    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.4);
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+.faq:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.5);
+}
+
+.faq h2 {
+    font-size: 2.4rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: linear-gradient(to right, var(--theme-color), var(--theme-color));
+    -webkit-background-clip: text;
+    color: transparent;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--theme-color);
+}
+
+.accordion-button {
+    background-color: #2c2c2c;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    padding: 12px;
+}
+
+.accordion-button:hover {
+    background-color: #444444;
+    transform: scale(1.05);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #3b3b3b;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.accordion-body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    font-size: 1rem;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.accordion-body:hover {
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .faq {
+    background-color: #121212;
+    color: white;
+    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .accordion-button {
+    background-color: #333333;
+    color: white;
+}
+
+.dark-mode .accordion-button:hover {
+    background-color: #444444;
+}
+
+.dark-mode .accordion-body {
+    background-color: #222222;
+    color: #e0e0e0;
+}
+
+.light-mode .faq {
+    background-color: #f8f9fa;
+    color: #333;
+    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.2);
+}
+
+.light-mode .accordion-button {
+    background-color: #f1f1f1;
+    color: #333;
+    border-radius: 8px;
+}
+
+.light-mode .accordion-button:hover {
+    background-color: #e1e1e1;
+    transform: scale(1.05);
+}
+
+.light-mode .accordion-button:not(.collapsed) {
+    background-color: #d1d1d1;
+    color: #333;
+}
+
+.light-mode .accordion-body {
+    background-color: #ffffff;
+    color: #333;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .accordion-body:hover {
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2);
+}
+/* Default dark mode styles */
+.hero {
+  background: linear-gradient(45deg, #8181e7, #3b3b73);
+  color: white;
+}
+/* Light mode styles */
+.light-mode .hero {
+  background: linear-gradient(45deg, #e3e3f7, #cfd6ff);
+  color: #1a1a1a;
+}
+
+.light-mode .hero .cta-btn {
+  background-color: #4a4aff;
+  color: white;
+}
+
+.light-mode .hero .cta-btn:hover {
+  background-color: #2e2ecf;
+}
+
+/* General Hero Styles */
+.hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  background-color: transparent; /* Ensure no background color */
+}
+
+.hero .content {
+  z-index: 1;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5); /* Optional overlay for readability */
+  border-radius: 10px;
+}
+
+/* Background Video Styling */
+#bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  /* Ensuring video fills the entire container */
+}
+
+/* Dark mode styles */
+.dark-mode .hero {
+  background: linear-gradient(45deg, #2c2c2c, #1a1a1a);
+  color: white;
+}
+
+.dark-mode .hero .cta-btn {
+  background-color: #00ff7f;
+  color: white;
+}
+
+.dark-mode .hero .cta-btn:hover {
+  background-color: #009f55;
+}
+
+
+  </style>
+</head>
+<body class="dark-mode">
+    <header class="header">
+      <a href="{% url 'home' %}" >
+        <img src="{% static 'images/Slay Task.png' %}" alt="logo">
+      </a>
+        <nav>
+          <a href="{% url 'features' %}">Features</a>
+          <a href="{% url 'resources' %}">Resources</a>
+            <a href="{% url 'login' %}">LogIn</a>
+            <a href="{% url 'signup'%}"><button class="signup-button">Sign Up</button></a>
+          <a href="{% url 'aboutus' %}">About Us</a>
+            <button onclick="toggleDarkMode()" class="btn btn-secondary" id="theme-toggle">🌙 Toggle Mode</button>
+        </nav>
+    </header>
+    
+    {% block main_block %}
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    
+    {% load static %}
+    <section class="hero" style="position: relative; overflow: hidden; height: 100vh;">
+      <video
+        autoplay
+        loop
+        muted
+        playsinline
+        id="bg-video"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;"
+      >
+        <source src="{% static 'videos/venom.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    
+      <div style="position: relative; z-index: 2; color: white; text-align: center; padding-top: 20vh;">
+        <h1 style="font-size: 3rem;">Welcome to Slay Task</h1>
+        <p style="font-size: 1.5rem;">Boost your productivity and take control of your tasks effortlessly.</p>
+        <a href="{% url 'login' %}" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background-color: #111; color: white; text-decoration: none; border-radius: 8px;">Get Started</a>
+      </div>
+    </section>
+    
+    
+    <script>
+      const video = document.getElementById("bg-video");
+    
+      video.addEventListener("ended", () => {
+        console.log("Video ended");
+      });
+    
+      video.addEventListener("error", (e) => {
+        console.log("Video error:", e);
+      });
+    
+      video.addEventListener("loadeddata", () => {
+        console.log("Video loaded");
+      });
+    </script>
+    
+    
+    
+    
+    
+    
+
+  <div class="features container d-flex justify-content-center align-items-center">
+    <div><img src="{% static 'images/second.jpg' %}" alt="" width="400" height="450"></div>
+    <div style="margin: 90px; padding: 20px;">
+      <h2>Why Choose Slay Task?</h2><br>
+      <div class="row">
+        <div class="col-md-4">
+          <h3><i class="fas fa-tasks"></i> Task Management</h3>
+          <p>Create, edit, and track tasks seamlessly.</p>
+        </div>
+        <div class="col-md-4">
+          <h3><i class="fas fa-bell"></i> Smart Notifications</h3>
+          <p>Never miss a deadline with timely reminders.</p>
+        </div>
+        <div class="col-md-4">
+          <h3><i class="fas fa-chart-line"></i> Analytics Dashboard</h3>
+          <p>Track your productivity with insightful stats.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="testimonials">
+    <h2>What Our Users Say</h2>
+    <div class="d-flex justify-content-center gap-3">
+        <div class="card" style="width: 18rem;">
+            <img src="{% static 'images/user1.jpg' %}" class="card-img-top" alt="Damon Salvatore">
+            <div class="card-body">
+                <h5 class="card-title">Damon Salvatore</h5>
+                <p class="card-text">"Slay Task has completely transformed the way I organize my work!".</p>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <img src="{% static 'images/user2.jpg' %}" class="card-img-top" alt="Elena Gilbert">
+            <div class="card-body">
+                <h5 class="card-title">Elena Gilbert</h5>
+                <p class="card-text">"A must-have for anyone looking to stay on top of their tasks."</p>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <img src="{% static 'images/user3.jpg' %}" class="card-img-top" alt="Caroline Forbes">
+            <div class="card-body">
+                <h5 class="card-title">Caroline Forbes</h5>
+                <p class="card-text">"An intuitive tool that saves me time and keeps me on track!"</p>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <img src="{% static 'images/user4.jpg' %}" class="card-img-top" alt="Klaus Mikaelson">
+            <div class="card-body">
+                <h5 class="card-title">Klaus Mikaelson</h5>
+                <p class="card-text">"With Slay Task, I am always two steps ahead. It’s a game-changer!"</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="faq">
+  <h2>Frequently Asked Questions</h2>
+  <div class="accordion" id="faqAccordion">
+      <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Is Slay Task free?
+              </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                  Yes! We offer a free plan with essential features.
+              </div>
+          </div>
+      </div>
+      <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Can I collaborate with a team?
+              </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                  Absolutely! Invite team members and manage tasks together.
+              </div>
+          </div>
+      </div>
+      <div class="accordion-item">
+          <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  How can I track my tasks?
+              </button>
+          </h2>
+          <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                  Slay Task provides you with a visual dashboard where you can see your task completion, deadlines, and priorities in one place.
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+ 
+
+  <div class="contact">
+    <h2>Contact Us</h2>
+    <p>Have questions? Reach out to us at <a href="mailto:support@slaytask.com">support@slaytask.com</a></p>
+  </div>
+
+  <div class="cta">
+    <h2>Ready to Get Started?</h2>
+    <p>Join thousands of users who are already slaying their tasks!</p>
+    <a href="#" class="btn btn-primary">Sign Up Now</a><br><br>
+    <img src="{% static 'images/imok.jpg' %}" alt="Slay Mode" width="370" height="400" style="border-radius: 20px;">
+  </div>
+  {% endblock %}
+
+  <div class="venom-outro">
+    SLAY | <span class="task-text">Task 🕷</span> 💥
+  </div>
+  
+
+  <div class="footer">
+    <p>&copy; 2025 Slay Task. All Rights Reserved.</p>
+    <p>Follow us on <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">LinkedIn</a></p>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+  document.body.classList.toggle("dark-mode");
+  document.body.classList.toggle("light-mode");
+  let themeToggle = document.getElementById("theme-toggle");
+  themeToggle.innerHTML = document.body.classList.contains("dark-mode") ? "🌙 Toggle Mode" : "⭐ Toggle Mode";
+}
+
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

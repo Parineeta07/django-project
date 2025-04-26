@@ -1,0 +1,324 @@
+{% extends 'home.html' %}
+{% block title_block %} Dashboard {% endblock %}
+{% load widget_tweaks %}
+
+{% block main_block %}
+<style>
+  /* Styling preserved from your previous code */
+  .dashboard-bg {
+    padding-top: 20px;
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: #e3e3e3;
+    font-weight: 600;
+  }
+
+  .task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 75px;
+  }
+
+  .task-item form {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin: 0;
+  }
+
+  .task-item input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+  }
+
+  .task-item strong {
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .task-date {
+    font-size: 0.875rem;
+    color: #555;
+  }
+
+  .modal-content {
+    border-radius: 15px;
+  }
+
+  .modal-header, .modal-footer {
+    border: none;
+  }
+
+  .add-task-btn {
+    float: right;
+  }
+
+  .logout-btn {
+    margin-top: 30px;
+  }
+
+  h1.text-center {
+    animation: fadeDown 0.8s ease-out;
+  }
+
+  .bg-pending {
+    background-color: #f5eac5;
+    color: #856404;
+    border-left: 5px solid #ffeeba;
+  }
+
+  .bg-completed {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 5px solid #c4dcc9;
+  }
+
+  .bg-upcoming {
+    background-color: #cce5ff;
+    color: #004085;
+    border-left: 5px solid #b8daff;
+  }
+
+  @keyframes fadeDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .progress-container {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.progress-bar-background {
+  background-color: #e0e0e0;
+  border-radius: 30px;
+  overflow: hidden;
+  height: 30px;
+  width: 80%;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.progress-bar-fill {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  height: 100%;
+  color: white;
+  text-align: right;
+  line-height: 30px;
+  border-radius: 30px 0 0 30px;
+  transition: width 0.5s ease-in-out;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.progress-text {
+  position: relative;
+  right: 5px;
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+</style>
+
+<div class="dashboard-bg">
+  <div class="dashboard-container container py-5">
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <h1 class="text-center mb-4" style="margin-top: 90px;">Welcome to Your Dashboard</h1>
+    <h2 class="text-center">Hello, {{ user.username }} 👋</h2>
+    <div class="text-center">
+      <span class="role-badge" style="background-color: cadetblue;">
+        Role: {% if user.is_superuser %}Admin{% else %}User{% endif %}
+      </span>
+    </div>
+    <div class="text-center mt-2 mb-4">
+      <h4 style="font-weight: 600; color: #0072ff; animation: pulse 2s infinite;">🚀 Let's crush your goals today!</h4>
+    </div>
+
+    <!-- Task Stats -->
+    <div class="row text-center mt-5">
+      <div class="col-md-4">
+        <div class="card bg-pending mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Pending Tasks</h5>
+            <p class="card-text">{{ pending_tasks_count|default:"0" }} tasks to do</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card bg-completed mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Completed Tasks</h5>
+            <p class="card-text">{{ completed_tasks_count|default:"0" }} done</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card bg-upcoming mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Upcoming Tasks</h5>
+            <p class="card-text">{{ upcoming_tasks_count|default:"0" }} upcoming tasks</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- 🔵 Progress Bar -->
+  <div class="progress-container">
+    <h2>Task Completion Progress</h2>
+    <div class="progress-bar-background">
+      <div class="progress-bar-fill" style="width: {{ progress_percentage }}%;">
+        <span class="progress-text">{{ progress_percentage|floatformat:0 }}%</span>
+      </div>
+    </div>
+  </div>
+
+    
+
+    <!-- Task List -->
+    <div class="task-section mt-5">
+      <h3>Your Tasks
+        <button class="btn btn-sm btn-success add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+          + Add Task
+        </button>
+      </h3>
+
+      <div id="task-list">
+        {% for task in tasks %}
+          <div class="task-item {% if task.is_completed %}bg-completed{% else %}bg-pending{% endif %}">
+            <form method="POST" action="{% url 'toggle_task' task.id %}">
+              {% csrf_token %}
+              <input type="checkbox" name="is_completed" onchange="this.form.submit()" {% if task.is_completed %}checked{% endif %}>
+              <div>
+                <strong>{{ task.name }}</strong>
+                <div>{{ task.description }}</div>
+                {% if task.due_date %}
+                  <div class="task-date">Due: {{ task.due_date|date:"M d, Y H:i" }}</div>
+                {% endif %}
+              </div>
+            </form>
+
+            <div class="d-flex">
+              <a href="{% url 'update_task' task.id %}" class="btn btn-sm btn-warning me-2">Edit</a>
+              <a href="{% url 'delete_task' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+          </div>
+        {% empty %}
+          <p>No tasks yet. Add one!</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <a href="{% url 'logout' %}" class="btn btn-danger logout-btn">Logout</a>
+  </div>
+</div>
+
+<!-- ✅ Clean and Styled Add Task Modal (only one instance) -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content p-3" style="border-radius: 20px;">
+      <form method="POST" action="{% url 'dashboard' %}">
+        {% csrf_token %}
+        <div class="modal-header border-0 pb-0">
+          <h4 class="modal-title fw-bold" id="addTaskModalLabel">
+            📝 Add New Task
+          </h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-floating mb-3">
+            {{ form.name|add_class:"form-control" }}
+            <label for="{{ form.name.id_for_label }}">Task Name</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            {{ form.description|add_class:"form-control" }}
+            <label for="{{ form.description.id_for_label }}">Description</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            {{ form.due_date|add_class:"form-control" }}
+            <label for="{{ form.due_date.id_for_label }}">Due Date</label>
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+          <button type="submit" class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 12px;">
+            ➕ Add Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- 🔸 Motivational Quote -->
+<div class="card mb-4" style="background: linear-gradient(135deg, #dfe9f3, #ffffff); border-left: 6px solid #0072ff;">
+  <div class="card-body text-center">
+    <h5 class="card-title">🌟 Stay Motivated!</h5>
+    <p class="card-text fst-italic">"Success is the sum of small efforts, repeated day in and day out." – Robert Collier</p>
+  </div>
+</div>
+
+<!-- 🔸 Task Filters -->
+<div class="mb-4 text-center">
+  <button class="btn btn-outline-primary me-2" onclick="filterTasks('all')">All</button>
+  <button class="btn btn-outline-success me-2" onclick="filterTasks('completed')">Completed</button>
+  <button class="btn btn-outline-warning" onclick="filterTasks('pending')">Pending</button>
+</div>
+<!-- 🔸 Productivity Tip Card -->
+<div class="card mt-5 text-center" style="background: #fff3cd; border-left: 5px solid #ffeeba;">
+  <div class="card-body">
+    <h5 class="card-title">💡 Productivity Tip</h5>
+    <p class="card-text mb-0">Use the <strong>Pomodoro technique</strong>: Work for 25 mins, then rest for 5 mins. It boosts focus!</p>
+  </div>
+</div>
+<div class="text-center mt-5">
+  <em>“Every small step counts. Keep going!” 💪</em>
+</div>
+<br> <br>
+<script>
+  function filterTasks(type) {
+    const tasks = document.querySelectorAll('.task-item');
+    tasks.forEach(task => {
+      const isCompleted = task.classList.contains('bg-completed');
+      if (type === 'all') {
+        task.style.display = 'flex';
+      } else if (type === 'completed') {
+        task.style.display = isCompleted ? 'flex' : 'none';
+      } else if (type === 'pending') {
+        task.style.display = isCompleted ? 'none' : 'flex';
+      }
+    });
+  }
+</script>
+
+{% endblock %}
