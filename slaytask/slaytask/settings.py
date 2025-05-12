@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'beforelogin',
     'widget_tweaks',
-    'miniproject'
+    'miniproject',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'slaytask.urls'
@@ -129,3 +132,5 @@ LOGIN_REDIRECT_URL = '/redirect-after-login/'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
+FLASK_API_URL = 'http://127.0.0.1:5000/api/analyze'
+CORS_ALLOW_ALL_ORIGINS = True

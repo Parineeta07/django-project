@@ -3,19 +3,30 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .forms import TaskForm
-from .models import Task
+from .models import Task, MoodEntry
 from django.utils import timezone
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db import models
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db.models import Count
 from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+import requests
+import os
+import logging
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import json
 
+
+# Setup logging
+logger = logging.getLogger(__name__)
+
+# Fetch Flask API URL from environment variables (use default for development)
+FLASK_API_URL = getattr(settings, 'FLASK_API_URL', 'http://127.0.0.1:5000/api/analyze')
 
 def homePage(request):
     return render(request, 'home.html')
 
+@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -31,17 +42,13 @@ def login_view(request):
                 login(request, user)
 
                 # Redirect based on role
-                if user.is_superuser:
-                    return redirect('admin_dashboard')
-                else:
-                    return redirect('dashboard')
+                return redirect('admin_dashboard' if user.is_superuser else 'dashboard')
             else:
                 messages.error(request, "Invalid credentials: Role mismatch")
         else:
             messages.error(request, 'Invalid username or password')
 
     return render(request, 'login.html')
-
 
 
 def signup(request):
@@ -60,112 +67,122 @@ def signup(request):
         else:
             user = User.objects.create_user(username=username, email=email, password=password)
             messages.success(request, 'Registration successful! You can now login.')
-            return redirect('login')  # ✅ this return must be inside the 'else' block
+            return redirect('login')
 
     return render(request, 'signup.html')
-@login_required
-def dashboard_view(request):
-    tasks = Task.objects.filter(user=request.user)
 
-    completed_tasks_count = tasks.filter(is_completed=True).count()
-    pending_tasks_count = tasks.filter(is_completed=False).count()
-    upcoming_tasks_count = tasks.filter(due_date__gte=timezone.now()).count()
 
-    total_tasks = tasks.count()
-    progress_percentage = (completed_tasks_count / total_tasks * 100) if total_tasks > 0 else 0
+def analyze_mood(username, task_message):
+    url = 'http://127.0.0.1:5000/api/analyze'  # Your Flask API URL
+    response = requests.post(url, json={'message': task_message, 'name': username})
 
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            task = form.save(commit=False)
-            task.user = request.user
-            task.save()
-            messages.success(request, "Task added!")
-            return redirect('dashboard')
+    if response.status_code == 200:
+        data = response.json()
+        mood_data = data.get('mood', 'neutral')
+        error_message = data.get('error_message', '')
+        return mood_data, error_message
     else:
-        form = TaskForm()
+        return 'neutral', 'Error in mood analysis'
 
+
+@csrf_exempt
+def dashboard_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User not authenticated."}, status=401)
+
+    user = request.user  # Get the current authenticated user
+    tasks = Task.objects.filter(user=user)  # Get tasks associated with the current user
+    task_count = tasks.count()
+
+    # Calculate task progress
+    completed_tasks = tasks.filter(status='completed').count() if task_count > 0 else 0
+    progress_percentage = (completed_tasks / task_count) * 100 if task_count > 0 else 0
+
+    # Get the latest task description for mood analysis
+    latest_task = tasks.order_by('-created_at').first()
+    task_message = latest_task.description.strip() if latest_task and latest_task.description else "Feeling okay."
+
+    # Analyze the mood based on the task message (initial mood analysis for the GET request)
+    mood_data, error_message = analyze_mood(user.username, task_message)
+
+    # If it's a POST request (e.g., from Postman)
+    if request.method == 'POST':
+        try:
+            print("Raw body:", request.body)
+            data = json.loads(request.body)
+            logger.info(f"Received data: {data}")
+
+            task_message = data.get('message', 'default message')
+            mood_data, error_message = analyze_mood(user.username, task_message)
+
+            # ✅ Save the mood entry
+            MoodEntry.objects.create(
+                user=user,
+                message=task_message,
+                mood=mood_data
+            )
+
+            return JsonResponse({
+                "status": "success",
+                "mood_data": mood_data,
+                "error_message": error_message
+            })
+
+        except Exception as e:
+            logger.error(f"Error processing request: {str(e)}")
+            return JsonResponse({"error": "Invalid request or data format."}, status=400)
+
+
+    recent_moods = MoodEntry.objects.filter(user=user).order_by('-timestamp')[:5]  # Fetch recent moods
+
+    # If it's a GET request, render the dashboard page
     context = {
         'tasks': tasks,
-        'form': form,
-        'completed_tasks_count': completed_tasks_count,
-        'pending_tasks_count': pending_tasks_count,
-        'upcoming_tasks_count': upcoming_tasks_count,
-        'progress_percentage': progress_percentage,  # ✅ Make sure this is passed
+        'progress_percentage': progress_percentage,
+        'mood_data': mood_data,
+        'error_message': error_message,
+        'recent_moods': recent_moods,  # Add recent moods to the context
     }
 
-    return render(request, 'dashboard.html', context)
-
-
-    context = {
-        'tasks': tasks,
-        'form': form,
-        'completed_tasks_count': completed_tasks_count,
-        'pending_tasks_count': pending_tasks_count,
-        'upcoming_tasks_count': upcoming_tasks_count,
-    }
-
-    return render(request, 'dashboard.html', context)
+    return render(request, "dashboard.html", context)
 
 
 
-def update_task(request, pk):
-    task = get_object_or_404(Task, pk=pk, user=request.user)
-    form = TaskForm(instance=task)
 
+def task_update(request, pk):
+    task = get_object_or_404(Task, pk=pk)
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
-            form.save()
-            return redirect('dashboard')
+            form.save()  # Save the updated task
+            return redirect('dashboard')  # Redirect to the dashboard
+    else:
+        form = TaskForm(instance=task)  # Prepopulate the form with the task data
 
-    return render(request, 'update_task.html', {'form': form})
-
-@login_required
-def task_update(request, pk):
-    task = get_object_or_404(Task, pk=pk, user=request.user)
-    if request.method == 'POST':
-        task.completed = not task.completed
-        task.save()
-        return redirect('dashboard')
+    return render(request, 'update_task.html', {'form': form, 'task': task})
 
 
-def toggle_task(request, task_id):
-    # Get the task to be updated
-    task = get_object_or_404(Task, id=task_id, user=request.user)
-    
-    # Toggle the task completion status
-    task.is_completed = not task.is_completed
-    task.save()
 
-    # Recalculate the counts for completed and pending tasks
-    completed_tasks_count = Task.objects.filter(user=request.user, is_completed=True).count()
-    pending_tasks_count = Task.objects.filter(user=request.user, is_completed=False).count()
-    upcoming_tasks_count = Task.objects.filter(user=request.user, due_date__gte=timezone.now()).count()
-
-    # Redirect to the dashboard view with updated task counts
-    return redirect('dashboard')
-    
 @login_required
 @require_POST
 def delete_task(request, task_id):
-    task = Task.objects.get(id=task_id, user=request.user)
+    task = get_object_or_404(Task, id=task_id, user=request.user)
     task.delete()
     messages.info(request, "Task deleted!")
     return redirect('dashboard')
 
+
 def logout_view(request):
     logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect('home')
+    return redirect('login')
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def admin_dashboard(request):
-    # Get all users with a count of their tasks
     users = User.objects.annotate(task_count=Count('tasks'))
 
-    
     total_users = users.count()
     total_tasks = Task.objects.count()
 
@@ -174,34 +191,65 @@ def admin_dashboard(request):
         'total_users': total_users,
         'total_tasks': total_tasks,
     }
+
     return render(request, 'admin_dashboard.html', context)
 
-@login_required
-def delete_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
-
-    # Only allow deletion if the user is owner or an admin
-    if request.user == task.user or request.user.is_superuser:
-        task.delete()
-
-    return redirect('admin_dashboard')  # or wherever you want to go next
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def delete_user(request, user_id):
     if request.user.is_superuser:
         try:
             user = User.objects.get(id=user_id)
             user.delete()
+            messages.success(request, f"User '{user.username}' deleted!")
         except User.DoesNotExist:
-            pass  # Optional: handle error gracefully
+            messages.error(request, "User does not exist")
     return redirect('admin_dashboard')
+
 
 def features(request):
     return render(request, 'features.html')
 
+
 def resources(request):
     return render(request, 'resources.html')
-    
+
+
 def aboutus(request):
     return render(request, 'aboutus.html')
-    
+
+
+
+
+
+
+@login_required
+def toggle_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+    task.is_completed = not task.is_completed
+    task.save()
+    messages.success(request, f"Task '{task.name}' marked as {'completed' if task.is_completed else 'incomplete'}.")
+    return redirect('dashboard')
+
+
+def get_mood(request, username):
+    flask_url = f'http://localhost:5000/get-mood-by-username?username={username}'
+
+    try:
+        # Sending GET request to Flask API
+        response = requests.get(flask_url)
+
+        if response.status_code == 200:
+            # Return the mood data if successful
+            mood_data = response.json()
+            return render(request, 'mood_display.html', {'mood_data': mood_data})
+        else:
+            # Return error if the API call is unsuccessful
+            return JsonResponse({"error": "Failed to fetch mood data from Flask API"}, status=400)
+
+    except requests.exceptions.RequestException as e:
+        # Log and return the error if the request fails
+        logger.error(f"Error fetching mood data from Flask: {e}")
+        return JsonResponse({"error": str(e)}, status=500)
+
